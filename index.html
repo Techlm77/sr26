@@ -1,17 +1,933 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Main Page</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SUN Racing — SR26</title>
+    <meta name="description"
+        content="SUN Racing — SR26 is the University of Sunderland's Formula Student team project to design, build, and test a single-seater racing car. Follow updates, grab files, and help fund the build." />
+    <meta property="og:title" content="SUN Racing — SR26" />
+    <meta property="og:description"
+        content="We're reviving Sunderland's Formula Student team to build a single-seater race car. Follow progress, read news, get the files, and donate to support the build." />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#d90429" />
+    <link rel="icon" href="assets/favicon.svg" />
     <style>
+        :root {
+            --sr-red: #d90429;
+            --sr-ink: #0b0b0e;
+            --sr-carbon: #121317;
+            --sr-mid: #1c1e24;
+            --sr-smoke: #9aa0a6;
+            --sr-white: #f6f7fb;
+            --sr-acc: #06b6d4;
+            --radius: 18px;
+            --shadow: 0 10px 25px rgba(0, 0, 0, .35);
+            --nav-h: 64px;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
         body {
-            background-color: rgb(34, 34, 34);
+            margin: 0;
+            line-height: 1.6;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+            color: var(--sr-white);
+            padding-top: var(--nav-h);
+            background:
+                radial-gradient(1200px 800px at 15% -10%, #1b1d22 0%, transparent 60%),
+                radial-gradient(1200px 800px at 85% -10%, #1b1d22 0%, transparent 60%),
+                linear-gradient(180deg, #0a0b0d 0%, #121317 50%, #0a0b0d 100%);
+        }
+
+        a {
+            color: inherit
+        }
+
+        .container {
+            width: min(1200px, 92vw);
+            margin-inline: auto
+        }
+
+        .btn {
+            display: inline-flex;
+            gap: .6rem;
+            align-items: center;
+            justify-content: center;
+            padding: .9rem 1.15rem;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 700;
+            letter-spacing: .2px;
+            transition: .2s ease;
+            border: 1px solid transparent
+        }
+
+        .btn.primary {
+            background: var(--sr-red);
             color: white;
+            box-shadow: 0px 0px 10px 5px rgba(217, 4, 41, .35)
+        }
+
+        .btn.ghost {
+            background: transparent;
+            border-color: #2c2f36;
+        }
+
+        .btn.ghost:hover {
+            border-color: #3b3f47;
+            transform: translateY(-2px)
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .35rem .6rem;
+            background: #1f2128;
+            border: 1px solid #2a2d35;
+            border-radius: 999px;
+            font-size: .85rem;
+            color: #cdd3db
+        }
+
+        header.site {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1000;
+            backdrop-filter: saturate(1.2) blur(8px);
+            background: rgba(8, 9, 11, .55);
+            border-bottom: 1px solid rgba(255, 255, 255, .05)
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .65rem 0
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: .8rem;
+            text-decoration: none
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: conic-gradient(from 220deg, var(--sr-red), #f43f5e, #fb923c);
+            border-radius: 12px;
+            box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .08)
+        }
+
+        .brand .name {
+            font-weight: 900;
+            letter-spacing: .3px;
+            font-size: 1.15rem
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: .4rem;
+            padding: 0;
+            margin: 0
+        }
+
+        nav a {
+            display: inline-flex;
+            padding: .6rem .8rem;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #d7dde6;
+            border: 1px solid transparent
+        }
+
+        nav a:hover {
+            background: #1c1e24;
+            border-color: #2a2d35
+        }
+
+        .nav-cta {
+            display: flex;
+            gap: .5rem;
+            align-items: center
+        }
+
+        .mobile-toggle {
+            display: none
+        }
+
+        .hero {
+            position: relative;
+            min-height: calc(100vh - var(--nav-h));
+            padding: clamp(48px, 6vw, 88px) 0;
+            display: flex;
+            background: url('assets/render-sr26-concept.png') center/cover no-repeat;
+        }
+
+        .hero::after {
+            content: none
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, .05) 0%, rgba(0, 0, 0, .45) 50%, rgba(0, 0, 0, .8) 100%);
+            z-index: 0
+        }
+
+        .hero-grid {
+            display: grid;
+            gap: 2rem;
+            align-items: center
+        }
+
+        .headline {
+            font-size: clamp(2rem, 3.6vw, 3.25rem);
+            line-height: 1.1;
+            margin: 0 0 1rem;
+            letter-spacing: .2px
+        }
+
+        .sub {
+            font-size: 1.05rem;
+            color: white;
+            margin: 0 0 1.25rem
+        }
+
+        .hero-card {
+            background: rgba(20, 21, 26, .8);
+            border: 1px solid rgba(255, 255, 255, .07);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1rem
+        }
+
+        .stat {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: .75rem;
+            align-items: center;
+            padding: .6rem .8rem;
+            background: #16171b;
+            border-radius: 12px;
+            border: 1px solid #24262d
+        }
+
+        .stat .bar {
+            height: 10px;
+            width: 260px;
+            background: #22252b;
+            border-radius: 999px;
+            overflow: hidden
+        }
+
+        .stat .bar>span {
+            display: block;
+            height: 100%;
+            width: var(--pct, 19%);
+            background: linear-gradient(90deg, #ef4444, #f97316, #22d3ee);
+        }
+
+        section {
+            padding: 70px 0;
+            scroll-margin-top: 90px
+        }
+
+        .panel {
+            background: linear-gradient(180deg, #16171b, #121318);
+            border: 1px solid #23252d;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow)
+        }
+
+        h2 {
+            margin: 0 0 1rem;
+            font-size: clamp(1.4rem, 2.4vw, 2rem)
+        }
+
+        p.lead {
+            color: #cdd3db
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            gap: .8rem;
+            padding: 1rem;
+            border-radius: 16px;
+            background: #15161a;
+            border: 1px solid #23252d
+        }
+
+        .card .meta {
+            display: flex;
+            gap: .65rem;
+            align-items: center;
+            color: #a8afba;
+            font-size: .9rem
+        }
+
+        .card .thumb {
+            aspect-ratio: 16/9;
+            width: 100%;
+            background: #0f1013;
+            border-radius: 12px;
+            border: 1px solid #24262d;
+            background-position: center;
+            background-size: cover
+        }
+
+        .files-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem
+        }
+
+        .file {
+            padding: 1rem;
+            border-radius: 16px;
+            background: #14161a;
+            border: 1px solid #23252d
+        }
+
+        .file h3 {
+            margin: .2rem 0 .4rem
+        }
+
+        .file .actions {
+            display: flex;
+            gap: .5rem;
+            flex-wrap: wrap
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem
+        }
+
+        .contact-card {
+            padding: 1rem;
+            border-radius: 16px;
+            background: #14161a;
+            border: 1px solid #23252d
+        }
+
+        .sponsors {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 1rem;
+            align-items: center
+        }
+
+        .sponsors .logo {
+            height: 44px;
+            background: #181a1f;
+            border-radius: 12px;
+            border: 1px solid #23252d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #98a1b3
+        }
+
+        footer {
+            padding: 26px 0;
+            color: #aeb6c3;
+            border-top: 1px solid rgba(255, 255, 255, .07)
+        }
+
+        .to-top {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateY(10px);
+            pointer-events: none;
+            transition: opacity .18s ease, transform .18s ease
+        }
+
+        .to-top.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto
+        }
+
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem
+        }
+
+        .center {
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .right {
+            display: flex;
+            justify-content: flex-end
+        }
+
+        .muted {
+            color: #b7bfcc
+        }
+
+        .mt-1 {
+            margin-top: .25rem
+        }
+
+        .mt-2 {
+            margin-top: .5rem
+        }
+
+        .mt-3 {
+            margin-top: .75rem
+        }
+
+        .mt-4 {
+            margin-top: 1rem
+        }
+
+        .mb-1 {
+            margin-bottom: .25rem
+        }
+
+        .mb-2 {
+            margin-bottom: .5rem
+        }
+
+        .mb-3 {
+            margin-bottom: .75rem
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem
+        }
+
+        @media (max-width: 920px) {
+
+            .hero-grid,
+            .grid-2,
+            .news-grid,
+            .files-grid,
+            .contact-grid {
+                grid-template-columns: 1fr
+            }
+
+            .sponsors {
+                grid-template-columns: repeat(3, 1fr)
+            }
+
+            .stat .bar {
+                width: 100%
+            }
+        }
+
+        @media (max-width: 760px) {
+            nav ul {
+                display: none
+            }
+
+            .mobile-toggle {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 42px;
+                height: 42px;
+                border-radius: 10px;
+                border: 1px solid #2c2f36;
+                background: #14161a
+            }
+
+            .nav.open ul {
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 64px;
+                display: flex;
+                flex-direction: column;
+                gap: .25rem;
+                background: #0f1115;
+                border-top: 1px solid #22252c;
+                padding: .6rem
+            }
+
+            .nav-cta {
+                display: none
+            }
+        }
+
+        .skip {
+            position: absolute;
+            left: -9999px;
+            top: auto
+        }
+
+        .skip:focus {
+            left: 10px;
+            top: 10px;
+            z-index: 100;
+            background: #0c0d10;
+            color: #fff;
+            padding: .6rem .8rem;
+            border-radius: 10px;
+            border: 1px solid #2a2d35
         }
     </style>
 </head>
+
 <body>
-    <h1>This site is in development, come back later.</h1>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site" role="banner" aria-label="Primary">
+        <div class="container nav" id="nav">
+            <a href="#home" class="brand" aria-label="SUN Racing Home">
+                <span class="logo" aria-hidden="true"></span>
+                <span class="name">SUN Racing — SR26</span>
+            </a>
+            <nav aria-label="Main">
+                <ul>
+                    <li><a href="#news">News</a></li>
+                    <li><a href="#files">Files</a></li>
+                    <li><a href="#store">Store</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="nav-cta">
+                <a class="btn primary" href="#donate" aria-label="Donate to SR26">Donate</a>
+                <button class="mobile-toggle" id="hamburger" aria-expanded="false" aria-controls="nav">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <main id="main">
+        <section id="home" class="hero">
+            <div class="container hero-grid">
+                <div>
+                    <span class="chip" aria-label="Project code">Project Code: <strong
+                            style="margin-left:.25rem">SR26</strong></span>
+                    <h1 class="headline">We are SUN Racing, building Sunderland's revived <em>Formula
+                            Student-style</em>
+                        race car.</h1>
+                    <p class="sub">SUN Racing is a student motorsport team at the University of Sunderland, designing,
+                        building, and testing a single-seater racing car for the IMechE Formula Student competition. We
+                        welcome students from all backgrounds to develop engineering, management, and teamwork skills.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="sponsors">
+            <div class="container">
+                <h2>Sponsor Us</h2>
+                <p class="lead">Thanks to our sponsors: RS RPO (£500), RS Motorports (chassis), and engine donor. Join
+                    them to support the build.</p>
+            </div>
+        </section>
+
+        <section id="motd">
+            <div class="container">
+                <h2>MOTD and Important Information</h2>
+                <p class="lead">We're reviving motorsport opportunities at Sunderland. Join us for build nights and
+                    contribute to the legacy.</p>
+                <p class="muted">Do a flip with the sauce and then you'll win the universe. Volunteers welcome Tue & Fri
+                    6–9 pm at City Campus.</p>
+            </div>
+        </section>
+
+        <section id="news">
+            <div class="container">
+                <h2>News &amp; Updates</h2>
+                <p class="lead">Progress notes, meetups, photos, and build logs from the team.</p>
+                <h3 class="mt-4">Featured</h3>
+                <div class="news-grid mt-3" aria-live="polite">
+                    <article class="card">
+                        <div class="thumb" style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEdw67K7dC_tAz6cwn64PyZRirAHi8Vdgd-A&s')"></div>
+                        <div class="meta"><span>10 Sep 2025</span> • <span>Build</span></div>
+                        <h3 class="mb-1">Chassis jig tacked up — alignment within 1.5 mm</h3>
+                        <p class="muted">Finished the base jig and tacked lower rails. Next: laser-check pick-up points
+                            and uprights. Volunteers welcome Friday 6–9 pm.</p>
+                    </article>
+                    <article class="card">
+                        <div class="thumb" style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEdw67K7dC_tAz6cwn64PyZRirAHi8Vdgd-A&s')"></div>
+                        <div class="meta"><span>02 Sep 2025</span> • <span>Powertrain</span></div>
+                        <h3 class="mb-1">Motor + controller arrived; bench dyno build begins</h3>
+                        <p class="muted">Initial CAN comms verified. Publishing wiring and safety checklist next week.
+                        </p>
+                    </article>
+                    <article class="card">
+                        <div class="thumb" style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEdw67K7dC_tAz6cwn64PyZRirAHi8Vdgd-A&s')"></div>
+                        <div class="meta"><span>21 Aug 2025</span> • <span>Sponsors</span></div>
+                        <h3 class="mb-1">Thank you to our first sponsors</h3>
+                        <p class="muted">Thanks to RS RPO (£500) and RS Motorports (chassis). Sponsor pack available.
+                        </p>
+                    </article>
+                </div>
+                <h3 class="mt-4">All News</h3>
+                <p class="muted">More updates coming as we revive the team.</p>
+            </div>
+        </section>
+
+        <section id="about">
+            <div class="container">
+                <h2>About Us</h2>
+                <p class="lead">SUN Racing is the University of Sunderland's Formula Student team, focusing on
+                    designing, building, and racing a single-seater car.</p>
+                <div class="grid-2 mt-3">
+                    <div>
+                        <h3>Intro to Us</h3>
+                        <p class="muted">We're reviving motorsport at Sunderland to provide hands-on experience in
+                            engineering, management, and more.</p>
+                    </div>
+                    <div>
+                        <h3>Who We Are</h3>
+                        <p class="muted">A team of students, alumni, and locals passionate about motorsports and
+                            innovation.</p>
+                    </div>
+                </div>
+                <div class="grid-2 mt-3">
+                    <div>
+                        <h3>Business</h3>
+                        <p class="muted">Handling sponsorships, marketing, and finances to run like a small business.
+                        </p>
+                    </div>
+                    <div>
+                        <h3>Engineering</h3>
+                        <p class="muted">Designing chassis, powertrain, and safety systems with real-world tools.</p>
+                    </div>
+                </div>
+                <h3 class="mt-4">The Team</h3>
+                <div class="panel" style="padding:1rem">
+                    <p class="muted">Names list of people who contributed: Students from engineering, business, and
+                        more. Join us!</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery">
+            <div class="container">
+                <h2>Car Photos</h2>
+                <p class="lead">Featured images of our progress and past cars.</p>
+                <div class="news-grid mt-3">
+                    <div class="card">
+                        <div class="thumb" style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEdw67K7dC_tAz6cwn64PyZRirAHi8Vdgd-A&s')"></div>
+                        <p class="meta">Date: 10 Sep 2025</p>
+                    </div>
+                    <div class="card">
+                        <div class="thumb" style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEdw67K7dC_tAz6cwn64PyZRirAHi8Vdgd-A&s')"></div>
+                        <p class="meta">Date: 02 Sep 2025</p>
+                    </div>
+                    <div class="card">
+                        <div class="thumb" style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEdw67K7dC_tAz6cwn64PyZRirAHi8Vdgd-A&s')"></div>
+                        <p class="meta">Date: 21 Aug 2025</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="files">
+            <div class="container">
+                <h2>Project Files</h2>
+                <p class="lead">CAD, drawings, wiring, safety docs, spreadsheets.</p>
+                <div class="files-grid mt-3">
+                    <div class="file">
+                        <h3>CAD (Chassis &amp; Body)</h3>
+                        <p class="muted">STEP &amp; Fusion 360 archives.</p>
+                        <div class="actions">
+                            <a class="btn ghost" href="#" download>Download .zip</a>
+                            <a class="btn ghost" href="#">View on GitHub</a>
+                        </div>
+                    </div>
+                    <div class="file">
+                        <h3>Power &amp; Wiring</h3>
+                        <p class="muted">HV layout, LV harness, CAN map, safety checklist.</p>
+                        <div class="actions">
+                            <a class="btn ghost" href="#">Open folder</a>
+                            <a class="btn ghost" href="#">PDF bundle</a>
+                        </div>
+                    </div>
+                    <div class="file">
+                        <h3>Bill of Materials</h3>
+                        <p class="muted">Live parts &amp; cost tracking spreadsheet.</p>
+                        <div class="actions">
+                            <a class="btn ghost" href="#">Google Sheet</a>
+                            <a class="btn ghost" href="#">CSV export</a>
+                        </div>
+                    </div>
+                    <div class="file">
+                        <h3>Manufacturing Drawings</h3>
+                        <p class="muted">Tube cut list &amp; fixtures, machined components, torque specs.</p>
+                        <div class="actions">
+                            <a class="btn ghost" href="#">Pack v1</a>
+                            <a class="btn ghost" href="#">DXF set</a>
+                        </div>
+                    </div>
+                    <div class="file">
+                        <h3>Rules &amp; Scrutineering</h3>
+                        <p class="muted">Tech regs highlights &amp; compliance tracker.</p>
+                        <div class="actions">
+                            <a class="btn ghost" href="#">PDF</a>
+                            <a class="btn ghost" href="#">Tracker</a>
+                        </div>
+                    </div>
+                    <div class="file">
+                        <h3>Software &amp; Telemetry</h3>
+                        <p class="muted">Logger firmware, dashboards, data examples.</p>
+                        <div class="actions">
+                            <a class="btn ghost" href="#">Repo</a>
+                            <a class="btn ghost" href="#">Docs</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="store">
+            <div class="container">
+                <div class="panel" style="padding:1rem">
+                    <div class="grid-2">
+                        <div>
+                            <h2>Team Store</h2>
+                            <p class="lead">Grab merch — tees, hoodies, stickers. Profits support parts and competition.
+                            </p>
+                            <a class="btn primary" href="https://example.com/store" target="_blank" rel="noopener">Open
+                                Store</a>
+                        </div>
+                        <div class="center">
+                            <div class="thumb" style="width:100%; background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEdw67K7dC_tAz6cwn64PyZRirAHi8Vdgd-A&s')"
+                                aria-label="Hoodie mockup" role="img"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="timeline">
+            <div class="container">
+                <h2>Milestones</h2>
+                <p class="lead">Key phases from concept to first shakedown lap.</p>
+                <ol class="muted" style="padding-left:1.2rem">
+                    <li>Concept &amp; packaging study — Q2 2025</li>
+                    <li>Chassis fabrication — Q3 2025</li>
+                    <li>Powertrain integration &amp; HV safety — Q4 2025</li>
+                    <li>Testing, telemetry &amp; driver training — Q1 2026</li>
+                </ol>
+            </div>
+        </section>
+
+        <section id="contact">
+            <div class="container">
+                <h2>Contact Us</h2>
+                <p class="lead">Questions, sponsors, or join build nights? Reach out.</p>
+                <div class="contact-grid mt-3">
+                    <div class="contact-card">
+                        <h3>Email</h3>
+                        <p class="muted">We'll respond within 1–2 days.</p>
+                        <p><a class="btn ghost"
+                                href="mailto:formula.students@sunderland.ac.uk">formula.students@sunderland.ac.uk</a>
+                        </p>
+                    </div>
+                    <div class="contact-card">
+                        <h3>LinkedIn</h3>
+                        <p class="muted">Connect on LinkedIn.</p>
+                        <p><a class="btn ghost"
+                                href="https://www.linkedin.com/in/dominic-parkin-85aba8231/"
+                                target="_blank" rel="noopener">View Profile</a></p>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <h3>Other Links</h3>
+                    <p class="muted">Follow on Instagram:</p>
+                    <blockquote class="instagram-media"
+                        data-instgrm-permalink="https://www.instagram.com/businesssocietysunderland?igsh=MXJ4MHBudzJxcmp4Yg==" data-instgrm-version="14"
+                        style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">
+                        <div style="padding:16px;">
+                            <div style=" display: flex; flex-direction: row; align-items: center;">
+                                <div
+                                    style=" background-color: #f4f4f4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;">
+                                </div>
+                                <div
+                                    style=" display: flex; flex-direction: column; flex-grow: 1; justify-content: center;">
+                                    <div
+                                        style=" background-color: #f4f4f4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;">
+                                    </div>
+                                    <div
+                                        style=" background-color: #f4f4f4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding: 19% 0;"> </div>
+                            <div style=" display: block; height: 50px; margin: 0 auto 12px; width: 50px;"></div>
+                            <div style="padding-top: 8px;">
+                                <div
+                                    style="color: #3897f0; font-family: Arial,sans-serif; font-size: 14px; font-style: normal; font-weight: 550; line-height: 18px;">
+                                    View this profile on Instagram</div>
+                            </div>
+                            <div style="padding: 12.5% 0;"> </div>
+                            <div style=" display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;">
+                                <div>
+                                    <div
+                                        style=" background-color: #f4f4f4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);">
+                                    </div>
+                                    <div
+                                        style=" background-color: #f4f4f4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;">
+                                    </div>
+                                    <div
+                                        style=" background-color: #f4f4f4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);">
+                                    </div>
+                                </div>
+                                <div style=" margin-left: 8px;">
+                                    <div
+                                        style=" background-color: #f4f4f4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;">
+                                    </div>
+                                    <div
+                                        style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg);">
+                                    </div>
+                                </div>
+                                <div style=" margin-left: auto;">
+                                    <div
+                                        style=" width: 0px; border-top: 8px solid #f4f4f4; border-right: 8px solid transparent; transform: translateY(16px);">
+                                    </div>
+                                    <div
+                                        style=" background-color: #f4f4f4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);">
+                                    </div>
+                                    <div
+                                        style=" width: 0; height: 0; border-top: 8px solid #f4f4f4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);">
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                style=" display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;">
+                                <div
+                                    style=" background-color: #f4f4f4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;">
+                                </div>
+                                <div
+                                    style=" background-color: #f4f4f4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;">
+                                </div>
+                            </div>
+                            <p
+                                style=" color: #c9c8cd; font-family: Arial,sans-serif; font-size: 14px; line-height: 17px; margin-bottom: 0; margin-top: 8px; overflow: hidden; padding: 8px 0 7px; text-align: center; text-overflow: ellipsis; white-space: nowrap;">
+                                <a style=" color: #c9c8cd; font-family: Arial,sans-serif; font-size: 14px; font-style: normal; font-weight: normal; line-height: 17px; text-decoration: none;"
+                                    href="https://www.instagram.com/sunracing76/?hl=en" target="_blank">Sun Racing
+                                    76</a> (@<a
+                                    style=" color: #c9c8cd; font-family: Arial,sans-serif; font-size: 14px; font-style: normal; font-weight: normal; line-height: 17px; text-decoration: none;"
+                                    href="https://www.instagram.com/sunracing76/" target="_blank">sunracing76</a>) •
+                                Instagram photos and videos
+                            </p>
+                        </div>
+                    <div class="mt-3">
+                        <h3>Location &amp; Workshop Hours</h3>
+                        <p class="muted">University of Sunderland • City Campus. Build nights: Tue &amp; Fri 6–9 pm.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="donate">
+            <div class="container">
+                <div class="panel" style="padding:1rem">
+                    <div class="grid-2">
+                        <div>
+                            <h2>Back the Build</h2>
+                            <p class="lead">Donations help buy components, safety gear, and materials. Thanks for
+                                supporting the revival of SUN Racing.</p>
+                            <a class="btn primary"
+                                href="https://www.gofundme.com/f/help-us-build-the-first-formula-student-style-car"
+                                target="_blank" rel="noopener" aria-label="Donate via GoFundMe">Donate via GoFundMe</a>
+                            <p class="muted mt-2">Secure donations through GoFundMe.</p>
+                        </div>
+                        <div>
+                            <div class="hero-card">
+                                <h3 class="mb-1">Video of Us Begging for Donations</h3>
+                                <div class="thumb"
+                                    style="aspect-ratio:16/9; background:#0f1013; border-radius:12px; border:1px solid #24262d;"
+                                    aria-label="Donation video placeholder"></div>
+                                <h3 class="mt-3 mb-1">Other Ways to Help</h3>
+                                <ul class="muted" style="margin:0; padding-left:1.1rem">
+                                    <li>In-kind parts (sheet, tube, machining, printing)</li>
+                                    <li>Workshop access &amp; tooling</li>
+                                    <li>Sponsorship — logo on the car</li>
+                                </ul>
+                                <p class="mt-2"><a class="btn ghost" href="#contact">Become a sponsor</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="grid-2">
+                <p class="muted">© <span id="year"></span> SUN Racing — University of Sunderland Formula Student team.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <button id="toTop" class="btn primary to-top" aria-label="Back to top" type="button">↑</button>
+
+    <script>
+        (function () {
+            const nav = document.getElementById('nav');
+            const toggle = document.getElementById('hamburger');
+            if (toggle) {
+                toggle.addEventListener('click', () => {
+                    const open = nav.classList.toggle('open');
+                    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                });
+            }
+            document.getElementById('year').textContent = new Date().getFullYear();
+            const raised = 500;
+            const goal = 2600;
+            const pct = Math.max(0, Math.min(100, (raised / goal) * 100));
+            const bar = document.getElementById('fund-bar');
+            const txt = document.getElementById('fund-text');
+            if (bar) { bar.style.setProperty('--pct', pct + '%'); }
+            if (txt) { txt.textContent = `£${raised.toLocaleString()} / £${goal.toLocaleString()}`; }
+            const smoothTo = (el) => el && el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            document.querySelectorAll('a[href^="#"]').forEach(a => {
+                a.addEventListener('click', e => {
+                    const id = a.getAttribute('href');
+                    if (id.length > 1) { e.preventDefault(); smoothTo(document.querySelector(id)); }
+                });
+            });
+            const toTop = document.getElementById('toTop');
+            const toTopFooter = document.getElementById('toTopFooter');
+            const showAt = 300;
+            const onScroll = () => {
+                const y = window.scrollY || document.documentElement.scrollTop;
+                if (toTop) { toTop.classList.toggle('show', y > showAt); }
+            };
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+            const goTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (toTop) { toTop.addEventListener('click', goTop); }
+            if (toTopFooter) { toTopFooter.addEventListener('click', goTop); }
+        })();
+    </script>
+    <script async src="//www.instagram.com/embed.js"></script>
 </body>
-<script src="https://techlm77.co.uk/js/active.js"></script>
+
 </html>
